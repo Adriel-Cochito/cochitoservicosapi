@@ -38,7 +38,7 @@ public class OrdemServico {
     private LocalDateTime dataExecucao;
 
     @NotNull(message = "O status é obrigatório.")
-    @Pattern(regexp = "PENDENTE|EM_ANDAMENTO|CONCLUIDO|CANCELADO", 
+    @Pattern(regexp = "PENDENTE|EM_ANDAMENTO|CONCLUIDO|CANCELADO",
              message = "Status deve ser: PENDENTE, EM_ANDAMENTO, CONCLUIDO ou CANCELADO")
     private String status;
 
