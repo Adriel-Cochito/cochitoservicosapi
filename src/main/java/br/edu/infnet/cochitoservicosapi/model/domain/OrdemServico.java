@@ -1,6 +1,8 @@
 package br.edu.infnet.cochitoservicosapi.model.domain;
 
 import java.time.LocalDateTime;
+import java.util.ArrayList;
+import java.util.List;
 
 import jakarta.persistence.Entity;
 import jakarta.persistence.GeneratedValue;
@@ -25,10 +27,7 @@ public class OrdemServico {
     @JoinColumn(name = "funcionario_id")
     private Funcionario funcionario;
 
-    @NotNull(message = "O serviço é obrigatório.")
-    @ManyToOne
-    @JoinColumn(name = "servico_id")
-    private Servico servico;
+    private List<ItemServico> itensServicos = new ArrayList<>();
 
     @NotNull(message = "A data de criação é obrigatória.")
     @PastOrPresent(message = "A data de criação não pode ser futura.")
@@ -43,14 +42,6 @@ public class OrdemServico {
     private String status;
 
 
-    @Override
-    public String toString() {
-        return String.format("OrdemServico{id=%d, cliente=%s, funcionario=%s, servico=%s, status='%s', dataCriacao=%s}", 
-                           id, 
-                           funcionario != null ? funcionario.getNome() : "null",
-                           servico != null ? servico.getTitulo() : "null", 
-                           status, dataCriacao);
-    }
 
     public Integer getId() {
         return id;
@@ -66,14 +57,6 @@ public class OrdemServico {
 
     public void setFuncionario(Funcionario funcionario) {
         this.funcionario = funcionario;
-    }
-
-    public Servico getServico() {
-        return servico;
-    }
-
-    public void setServico(Servico servico) {
-        this.servico = servico;
     }
 
     public LocalDateTime getDataCriacao() {
@@ -100,4 +83,14 @@ public class OrdemServico {
         this.status = status;
     }
 
+	public List<ItemServico> getItensServicos() {
+		return itensServicos;
+	}
+
+	public void setItensServicos(List<ItemServico> itensServicos) {
+		this.itensServicos = itensServicos;
+	}
+
+    
+    
 }

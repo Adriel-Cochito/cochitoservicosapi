@@ -5,9 +5,7 @@ import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
 import jakarta.validation.constraints.Email;
-import jakarta.validation.constraints.Min;
 import jakarta.validation.constraints.NotBlank;
-import jakarta.validation.constraints.NotNull;
 import jakarta.validation.constraints.Pattern;
 import jakarta.validation.constraints.Size;
 
@@ -32,9 +30,6 @@ public class Funcionario {
 	private String telefone;
 
 
-	@NotNull(message = "O salário é obrigatório.")
-	@Min(value = 0, message = "O salário não pode ser negativo.")
-	private double salario;
 	private boolean ativo;
 
 
@@ -46,18 +41,10 @@ public class Funcionario {
 	@Override
 	public String toString() {
 		return String.format("Funcionario{%s, matricula=%d, salario=%.2f, ehAtivo=%s, %s", super.toString(),
-				salario, ativo ? "ativo" : "inativo");
+				ativo ? "ativo" : "inativo");
 	}
 
 
-
-	public double getSalario() {
-		return salario;
-	}
-
-	public void setSalario(double salario) {
-		this.salario = salario;
-	}
 
 	public boolean isAtivo() {
 		return ativo;
