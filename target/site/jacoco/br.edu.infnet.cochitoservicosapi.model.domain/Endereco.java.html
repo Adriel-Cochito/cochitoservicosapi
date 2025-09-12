@@ -1,0 +1,135 @@
+<?xml version="1.0" encoding="UTF-8"?><!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd"><html xmlns="http://www.w3.org/1999/xhtml" lang="pt"><head><meta http-equiv="Content-Type" content="text/html;charset=UTF-8"/><link rel="stylesheet" href="../jacoco-resources/report.css" type="text/css"/><link rel="shortcut icon" href="../jacoco-resources/report.gif" type="image/gif"/><title>Endereco.java</title><link rel="stylesheet" href="../jacoco-resources/prettify.css" type="text/css"/><script type="text/javascript" src="../jacoco-resources/prettify.js"></script></head><body onload="window['PR_TAB_WIDTH']=4;prettyPrint()"><div class="breadcrumb" id="breadcrumb"><span class="info"><a href="../jacoco-sessions.html" class="el_session">Sessions</a></span><a href="../index.html" class="el_report">cochitoservicosapi</a> &gt; <a href="index.source.html" class="el_package">br.edu.infnet.cochitoservicosapi.model.domain</a> &gt; <span class="el_source">Endereco.java</span></div><h1>Endereco.java</h1><pre class="source lang-java linenums">package br.edu.infnet.cochitoservicosapi.model.domain;
+
+import jakarta.persistence.Entity;
+import jakarta.persistence.GeneratedValue;
+import jakarta.persistence.GenerationType;
+import jakarta.persistence.Id;
+import jakarta.validation.constraints.NotBlank;
+import jakarta.validation.constraints.Pattern;
+import jakarta.validation.constraints.Size;
+
+@Entity
+<span class="fc" id="L12">public class Endereco {</span>
+
+	@Id
+	@GeneratedValue(strategy = GenerationType.IDENTITY)
+	private Integer id;
+	
+    @NotBlank(message = &quot;O CEP é obrigatório.&quot;)
+    @Pattern(regexp = &quot;\\d{5}-\\d{3}&quot;, message = &quot;CEP inválido. Use o formato XXXXX-XXX.&quot;)
+    private String cep; 
+
+    @NotBlank(message = &quot;O logradouro é obrigatório.&quot;)
+    @Size(min = 3, max = 100, message = &quot;Logradouro deve ter entre 3 e 100 caracteres.&quot;)
+    private String logradouro; 
+
+    private String complemento;
+
+    private String unidade;
+
+    @NotBlank(message = &quot;O bairro é obrigatório.&quot;)
+    @Size(min = 3, max = 50, message = &quot;Bairro deve ter entre 3 e 50 caracteres.&quot;)
+    private String bairro; 
+
+    @NotBlank(message = &quot;A localidade é obrigatória.&quot;)
+    @Size(min = 3, max = 50, message = &quot;Localidade deve ter entre 3 e 50 caracteres.&quot;)
+    private String localidade; 
+
+    @NotBlank(message = &quot;A UF é obrigatória.&quot;)
+    @Size(min = 2, max = 2, message = &quot;UF deve ter 2 caracteres.&quot;)
+    private String uf; 
+
+    @NotBlank(message = &quot;O estado é obrigatório.&quot;)
+    @Size(min = 3, max = 50, message = &quot;Estado deve ter entre 3 e 50 caracteres.&quot;)
+    private String estado;
+	
+	//TODO construtor do endereço
+	
+	@Override
+	public String toString() {
+<span class="fc" id="L50">		 return &quot;Endereco{&quot; +</span>
+	               &quot;id=&quot; + id +
+	               &quot;, cep='&quot; + cep + '\'' +
+	               &quot;, logradouro='&quot; + logradouro + '\'' +
+	               &quot;, complemento='&quot; + complemento + '\'' +
+	               &quot;, unidade='&quot; + unidade + '\'' +
+	               &quot;, bairro='&quot; + bairro + '\'' +
+	               &quot;, localidade='&quot; + localidade + '\'' +
+	               &quot;, uf='&quot; + uf + '\'' +
+	               &quot;, estado='&quot; + estado + '\'' +
+	               '}';
+	}
+
+	public Integer getId() {
+<span class="nc" id="L64">		return id;</span>
+	}
+
+	public void setId(Integer id) {
+<span class="nc" id="L68">		this.id = id;</span>
+<span class="nc" id="L69">	}</span>
+
+	public String getCep() {
+<span class="nc" id="L72">		return cep;</span>
+	}
+
+	public void setCep(String cep) {
+<span class="fc" id="L76">		this.cep = cep;</span>
+<span class="fc" id="L77">	}</span>
+
+	public String getLogradouro() {
+<span class="nc" id="L80">		return logradouro;</span>
+	}
+
+	public void setLogradouro(String logradouro) {
+<span class="fc" id="L84">		this.logradouro = logradouro;</span>
+<span class="fc" id="L85">	}</span>
+
+	public String getComplemento() {
+<span class="nc" id="L88">		return complemento;</span>
+	}
+
+	public void setComplemento(String complemento) {
+<span class="fc" id="L92">		this.complemento = complemento;</span>
+<span class="fc" id="L93">	}</span>
+
+	public String getUnidade() {
+<span class="nc" id="L96">		return unidade;</span>
+	}
+
+	public void setUnidade(String unidade) {
+<span class="fc" id="L100">		this.unidade = unidade;</span>
+<span class="fc" id="L101">	}</span>
+
+	public String getBairro() {
+<span class="nc" id="L104">		return bairro;</span>
+	}
+
+	public void setBairro(String bairro) {
+<span class="fc" id="L108">		this.bairro = bairro;</span>
+<span class="fc" id="L109">	}</span>
+
+	public String getLocalidade() {
+<span class="nc" id="L112">		return localidade;</span>
+	}
+
+	public void setLocalidade(String localidade) {
+<span class="fc" id="L116">		this.localidade = localidade;</span>
+<span class="fc" id="L117">	}</span>
+
+	public String getUf() {
+<span class="nc" id="L120">		return uf;</span>
+	}
+
+	public void setUf(String uf) {
+<span class="fc" id="L124">		this.uf = uf;</span>
+<span class="fc" id="L125">	}</span>
+
+	public String getEstado() {
+<span class="nc" id="L128">		return estado;</span>
+	}
+
+	public void setEstado(String estado) {
+<span class="fc" id="L132">		this.estado = estado;</span>
+<span class="fc" id="L133">	}</span>
+}
+</pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.12.202403310830</span></div></body></html>

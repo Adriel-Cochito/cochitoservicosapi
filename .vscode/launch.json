@@ -1,0 +1,14 @@
+{
+    "configurations": [
+        {
+            "type": "java",
+            "name": "Spring Boot-CochitoservicosapiApplication<cochitoservicosapi>",
+            "request": "launch",
+            "cwd": "${workspaceFolder}",
+            "mainClass": "br.edu.infnet.cochitoservicosapi.CochitoservicosapiApplication",
+            "projectName": "cochitoservicosapi",
+            "args": "",
+            "envFile": "${workspaceFolder}/.env"
+        }
+    ]
+}
