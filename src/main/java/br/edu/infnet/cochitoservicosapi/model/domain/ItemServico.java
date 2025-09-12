@@ -8,16 +8,11 @@ public class ItemServico {
 	@GeneratedValue(strategy = GenerationType.IDENTITY)
 	private Integer id;
 	
-	private OrdemServico ordemServico;
 	
 	private Servico servico;
 	private Integer quantidade;
-	public OrdemServico getOrdemServico() {
-		return ordemServico;
-	}
-	public void setOrdemServico(OrdemServico ordemServico) {
-		this.ordemServico = ordemServico;
-	}
+	
+
 	public Servico getServico() {
 		return servico;
 	}

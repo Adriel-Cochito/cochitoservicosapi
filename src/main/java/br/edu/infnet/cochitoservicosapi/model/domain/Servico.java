@@ -1,5 +1,7 @@
 package br.edu.infnet.cochitoservicosapi.model.domain;
 
+import java.math.BigDecimal;
+
 import jakarta.persistence.Entity;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
@@ -22,7 +24,7 @@ public class Servico {
 
     @NotNull(message = "O preço é obrigatório.")
     @Min(value = 0, message = "O preço não pode ser negativo.")
-    private double preco;
+    private BigDecimal preco;
 
     @NotBlank(message = "A descrição é obrigatória.")
     @Size(min = 10, max = 500, message = "Descrição deve ter entre 10 e 500 caracteres.")
@@ -50,11 +52,11 @@ public class Servico {
         this.titulo = titulo;
     }
 
-    public double getPreco() {
+    public BigDecimal getPreco() {
         return preco;
     }
 
-    public void setPreco(double preco) {
+    public void setPreco(BigDecimal preco) {
         this.preco = preco;
     }
 
