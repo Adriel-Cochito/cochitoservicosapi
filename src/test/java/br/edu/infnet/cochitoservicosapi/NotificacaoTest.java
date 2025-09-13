@@ -19,6 +19,7 @@ import br.edu.infnet.cochitoservicosapi.model.domain.TipoNotificacao;
 public class NotificacaoTest {
 
 	private Funcionario funcionario;
+	private String FuncionarioNome;
 
 	@BeforeEach
 	void setUp() {
@@ -27,6 +28,7 @@ public class NotificacaoTest {
 		funcionario.setNome("João Silva");
 		funcionario.setEmail("joao.silva@cochito.com");
 		funcionario.setAtivo(true);
+		FuncionarioNome = funcionario.getNome();
 	}
 
 	@Test
@@ -58,14 +60,14 @@ public class NotificacaoTest {
 		notificacao.setTitulo(titulo);
 		notificacao.setMensagem(mensagem);
 		notificacao.setTipoNotificacao(tipo);
-		notificacao.setFuncionario(funcionario);
+		notificacao.setFuncionario(FuncionarioNome);
 		notificacao.setDataCriacao(dataCriacao);
 
 		// Então: deve permitir obter os dados definidos
 		assertEquals(titulo, notificacao.getTitulo(), "RF002.2 - Título deve ser o definido");
 		assertEquals(mensagem, notificacao.getMensagem(), "RF002.2 - Mensagem deve ser a definida");
 		assertEquals(tipo, notificacao.getTipoNotificacao(), "RF002.2 - Tipo deve ser o definido");
-		assertEquals(funcionario, notificacao.getFuncionario(), "RF002.2 - Funcionário deve ser o definido");
+		assertEquals(FuncionarioNome, notificacao.getFuncionario(), "RF002.2 - Funcionário deve ser o definido");
 		assertEquals(dataCriacao, notificacao.getDataCriacao(), "RF002.2 - Data de criação deve ser a definida");
 	}
 
@@ -77,7 +79,7 @@ public class NotificacaoTest {
 		notificacao.setTitulo("Teste");
 		notificacao.setMensagem("Mensagem de teste");
 		notificacao.setTipoNotificacao(TipoNotificacao.ORDEM_SERVICO_CRIADA);
-		notificacao.setFuncionario(funcionario);
+		notificacao.setFuncionario(FuncionarioNome);
 		notificacao.setDataCriacao(LocalDateTime.now());
 
 		// Verificar estado inicial

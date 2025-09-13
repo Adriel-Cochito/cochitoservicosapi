@@ -54,7 +54,7 @@ public class NotificacaoService {
 
 	// @param funcionario O funcionário para contar as notificações
 	// @return O número de notificações não lidas
-	public int contarNotificacaoNaoLidas(Funcionario funcionario) {
+	public int contarNotificacaoNaoLidas(String funcionario) {
 		if (funcionario == null) {
 			return 0;
 		}
@@ -89,7 +89,7 @@ public class NotificacaoService {
 		notificacao.setTitulo(gerarTitulo(ordemServico, tipo));
 		notificacao.setMensagem(gerarMensagem(ordemServico, tipo));
 		notificacao.setTipoNotificacao(tipo);
-		notificacao.setFuncionario(funcionario);
+		notificacao.setFuncionario(funcionario.getNome());
 		notificacao.setDataCriacao(LocalDateTime.now());
 		return notificacao;
 	}

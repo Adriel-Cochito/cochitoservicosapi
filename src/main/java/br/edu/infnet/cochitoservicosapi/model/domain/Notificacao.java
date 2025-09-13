@@ -8,7 +8,7 @@ public class Notificacao {
 	private String titulo;
 	private String mensagem;
 	private TipoNotificacao tipoNotificacao;
-	private Funcionario funcionario;
+	private String funcionario;
 	private LocalDateTime dataCriacao;
 	private LocalDateTime dataLeitura;
 	private boolean lida;
@@ -46,7 +46,7 @@ public class Notificacao {
 	// @return string formatada com informações essenciais
 	public String resumo() {
 		return String.format("Notificacao[tipo=%s, funcionario=%s, lida=%s]", tipoNotificacao,
-				funcionario != null ? funcionario.getNome() : "N/A", lida);
+				funcionario != null ? funcionario : "N/A", lida);
 	}
 
 	// Métodos equals e hashCode para comparação adequada
@@ -93,11 +93,11 @@ public class Notificacao {
 		this.tipoNotificacao = tipoNotificacao;
 	}
 
-	public Funcionario getFuncionario() {
+	public String getFuncionario() {
 		return funcionario;
 	}
 
-	public void setFuncionario(Funcionario funcionario) {
+	public void setFuncionario(String funcionario) {
 		this.funcionario = funcionario;
 	}
 

@@ -84,7 +84,7 @@ public class NotificacaoServiceTest {
 		assertNotNull(notificacao, "RF003.1 - Notificação deve ser criada");
 		assertEquals("Nova Ordem de Serviço #101", notificacao.getTitulo(),
 				"RF003.1 - Título deve conter o ID da ordem");
-		assertEquals(funcionarioAtivo, notificacao.getFuncionario(), "RF003.1 - Funcionário deve ser o da ordem");
+		assertEquals(funcionarioAtivo.getNome(), notificacao.getFuncionario(), "RF003.1 - Funcionário deve ser o da ordem");
 		assertEquals(tipo, notificacao.getTipoNotificacao(), "RF003.1 - Tipo deve ser o informado");
 		assertNotNull(notificacao.getDataCriacao(), "RF003.1 - Data de criação deve estar preenchida");
 	}
@@ -148,7 +148,7 @@ public class NotificacaoServiceTest {
 		notificacaoService.criarNotificacao(ordemServico, TipoNotificacao.ORDEM_SERVICO_CONCLUIDA);
 
 		// Quando: contar notificações não lidas
-		int contador = notificacaoService.contarNotificacaoNaoLidas(funcionarioAtivo);
+		int contador = notificacaoService.contarNotificacaoNaoLidas(funcionarioAtivo.getNome());
 
 		// Então: deve retornar 3 notificações não lidas
 		assertEquals(3, contador, "RF003.5 - Deve haver 3 notificações não lidas para o funcionário");
