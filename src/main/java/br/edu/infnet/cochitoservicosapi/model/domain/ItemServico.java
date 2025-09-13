@@ -23,21 +23,25 @@ public class ItemServico {
 	private Integer quantidade;
 
 	public BigDecimal calcularSubTotal() {
-
-		if (quantidade == null || quantidade <= 0) {
+		// Validação consolidada de quantidade
+		if (!isQuantidadeValida()) {
 			return BigDecimal.ZERO;
 		}
-		
-		if(servico == null) {
-	        return BigDecimal.ZERO;
-	    }
-	    
-	    BigDecimal preco = servico.getPreco();
-	    if(preco == null) {
-	        return BigDecimal.ZERO;
-	    }
 
-	    return preco.multiply(new BigDecimal(quantidade));
+		// Validação consolidada de serviço e preço
+		if (!isServicoValido()) {
+			return BigDecimal.ZERO;
+		}
+
+		return servico.getPreco().multiply(new BigDecimal(quantidade));
+	}
+
+	private boolean isQuantidadeValida() {
+		return quantidade != null && quantidade > 0;
+	}
+	
+	private boolean isServicoValido() {
+		return servico != null && servico.getPreco() != null;
 	}
 
 	public Servico getServico() {
