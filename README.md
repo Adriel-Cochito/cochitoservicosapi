@@ -5,7 +5,13 @@
 ### Sistema Existente (Disciplina Anterior)
 O **CochitoServicosAPI** possui a estrutura consolidada de gestão de serviços:
 
-#### Classes Base Atuais:
+### Progresso TDD:
+- 🔴 RED: **100%**
+- 🟢 GREEN: **0%**
+- 🟡 REFACTOR: **0%**
+
+
+#### Classes Base Iniciais:
 - **`Funcionario.java`** - Funcionários que executam os serviços (com controle ativo/inativo)
 - **`OrdemServico.java`** - Núcleo do sistema - Controla execução dos serviços
 - **`Servico.java`** - Catálogo de serviços oferecidos pela empresa
