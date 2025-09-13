@@ -1,15 +1,23 @@
 package br.edu.infnet.cochitoservicosapi.model.domain;
 
+import jakarta.persistence.Entity;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
+import jakarta.persistence.Id;
+import jakarta.persistence.JoinColumn;
+import jakarta.persistence.ManyToOne;
 
+@Entity
 public class ItemServico {
 
-	@GeneratedValue(strategy = GenerationType.IDENTITY)
-	private Integer id;
+	@Id
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    private Integer id;
 	
-	
-	private Servico servico;
+	@ManyToOne
+    @JoinColumn(name = "servico_id")
+    private Servico servico;
+
 	private Integer quantidade;
 	
 

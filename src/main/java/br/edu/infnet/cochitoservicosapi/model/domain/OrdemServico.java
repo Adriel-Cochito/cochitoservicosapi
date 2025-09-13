@@ -4,12 +4,14 @@ import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
 
+import jakarta.persistence.CascadeType;
 import jakarta.persistence.Entity;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
 import jakarta.persistence.JoinColumn;
 import jakarta.persistence.ManyToOne;
+import jakarta.persistence.OneToMany;
 import jakarta.validation.constraints.Future;
 import jakarta.validation.constraints.NotNull;
 import jakarta.validation.constraints.PastOrPresent;
@@ -27,7 +29,9 @@ public class OrdemServico {
     @JoinColumn(name = "funcionario_id")
     private Funcionario funcionario;
 
-    private List<ItemServico> itensServicos = new ArrayList<>();
+    @OneToMany(cascade = CascadeType.ALL)
+    @JoinColumn(name = "ordem_servico_id")
+    private List<ItemServico> itensServicos;
 
     @NotNull(message = "A data de criação é obrigatória.")
     @PastOrPresent(message = "A data de criação não pode ser futura.")
