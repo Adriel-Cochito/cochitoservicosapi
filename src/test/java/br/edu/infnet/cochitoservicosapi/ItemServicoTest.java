@@ -13,6 +13,7 @@ import br.edu.infnet.cochitoservicosapi.model.domain.ItemServico;
 import br.edu.infnet.cochitoservicosapi.model.domain.Servico;
 
 public class ItemServicoTest {
+	
 	private Servico servico;
 
 	@BeforeEach
