@@ -7,7 +7,7 @@ O **CochitoServicosAPI** possui a estrutura consolidada de gestão de serviços:
 
 ### Progresso TDD:
 - 🔴 RED: **100%**
-- 🟢 GREEN: **0%**
+- 🟢 GREEN: **100%**
 - 🟡 REFACTOR: **0%**
 
 
