@@ -13,6 +13,8 @@ import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 
 import br.edu.infnet.cochitoservicosapi.model.domain.Funcionario;
+import br.edu.infnet.cochitoservicosapi.model.domain.Notificacao;
+import br.edu.infnet.cochitoservicosapi.model.domain.TipoNotificacao;
 
 public class NotificacaoTest {
 
