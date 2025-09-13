@@ -16,10 +16,14 @@ import org.junit.jupiter.api.Test;
 
 import br.edu.infnet.cochitoservicosapi.model.domain.Funcionario;
 import br.edu.infnet.cochitoservicosapi.model.domain.ItemServico;
+import br.edu.infnet.cochitoservicosapi.model.domain.Notificacao;
 import br.edu.infnet.cochitoservicosapi.model.domain.OrdemServico;
 import br.edu.infnet.cochitoservicosapi.model.domain.Servico;
+import br.edu.infnet.cochitoservicosapi.model.domain.TipoNotificacao;
+import br.edu.infnet.cochitoservicosapi.model.service.NotificacaoService;
 
 public class NotificacaoServiceTest {
+	
 	private NotificacaoService notificacaoService;
 	private Funcionario funcionarioAtivo;
 	private Funcionario funcionarioInativo;
