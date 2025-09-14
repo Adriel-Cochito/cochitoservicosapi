@@ -1,1 +1,7 @@
+br\edu\infnet\cochitoservicosapi\NotificacaoTest.class
+br\edu\infnet\cochitoservicosapi\distancia\DistanciaServiceTest.class
+br\edu\infnet\cochitoservicosapi\distancia\AwesomeCepFeignClientTest.class
+br\edu\infnet\cochitoservicosapi\NotificacaoServiceTest.class
 br\edu\infnet\cochitoservicosapi\CochitoservicosapiApplicationTests.class
+br\edu\infnet\cochitoservicosapi\distancia\OpenRouteFeignClientTest.class
+br\edu\infnet\cochitoservicosapi\ItemServicoTest.class
