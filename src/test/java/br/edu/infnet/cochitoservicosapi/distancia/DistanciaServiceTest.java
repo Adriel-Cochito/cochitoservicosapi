@@ -8,9 +8,9 @@ import static org.mockito.Mockito.when;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.Mock;
-import org.springframework.boot.test.context.SpringBootTest;
-import org.springframework.test.context.ActiveProfiles;
+import org.mockito.junit.jupiter.MockitoExtension;
 
 import br.edu.infnet.cochitoservicosapi.client.AwesomeCepFeignClient;
 import br.edu.infnet.cochitoservicosapi.client.OpenRouteFeignClient;
@@ -19,8 +19,7 @@ import br.edu.infnet.cochitoservicosapi.model.domain.DistanciaQueryResult;
 import br.edu.infnet.cochitoservicosapi.model.domain.OpenRouteResponse;
 import br.edu.infnet.cochitoservicosapi.model.service.DistanciaService;
 
-@SpringBootTest
-@ActiveProfiles("test")
+@ExtendWith(MockitoExtension.class)
 public class DistanciaServiceTest {
 
     @Mock
@@ -31,9 +30,11 @@ public class DistanciaServiceTest {
     
     private DistanciaService distanciaService;
     
+    private final String apiKey = "test-api-key"; // Valor fixo para testes
+    
     @BeforeEach
     void setUp() {
-        distanciaService = new DistanciaService(awesomeCepFeignClient, openRouteFeignClient, "test-api-key");
+        distanciaService = new DistanciaService(awesomeCepFeignClient, openRouteFeignClient, apiKey);
     }
     
     @Test
@@ -79,7 +80,7 @@ public class DistanciaServiceTest {
         // Configuração dos mocks
         when(awesomeCepFeignClient.consultarCep(cepOrigem)).thenReturn(respostaOrigem);
         when(awesomeCepFeignClient.consultarCep(cepDestino)).thenReturn(respostaDestino);
-        when(openRouteFeignClient.calcularRota(anyString(), anyString(), anyString()))
+        when(openRouteFeignClient.calcularRota(apiKey, "-47.9373729,-19.72942", "-47.9381862,-19.7443998"))
             .thenReturn(rotaResponse);
         
         // Act
