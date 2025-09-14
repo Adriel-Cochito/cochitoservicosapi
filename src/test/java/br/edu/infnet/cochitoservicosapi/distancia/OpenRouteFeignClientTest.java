@@ -1,4 +1,4 @@
-package br.edu.infnet.cochitoservicosapi.distancia.client;
+package br.edu.infnet.cochitoservicosapi.distancia;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
