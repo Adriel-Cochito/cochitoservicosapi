@@ -20,7 +20,7 @@ public class OpenRouteFeignClientTest {
     @Mock
     private OpenRouteFeignClient openRouteFeignClient;
     
-    private final String apiKey = "test-api-key"; // Valor fixo para testes
+    private final String apiKey = "eyJvcmciOiI1YjNjZTM1OTc4NTExMTAwMDFjZjYyNDgiLCJpZCI6ImYyYzNkMDY3YzI1ODQ0ODhhMDc3ZmNjNTI1NmY1N2Y1IiwiaCI6Im11cm11cjY0In0%3D"; // Valor fixo para testes
 
     @Test
     @DisplayName("Deve calcular rota corretamente")

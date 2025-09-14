@@ -6,7 +6,7 @@ import org.springframework.web.bind.annotation.RequestParam;
 
 import br.edu.infnet.cochitoservicosapi.model.domain.OpenRouteResponse;
 
-@FeignClient(name = "openRouteClient", url = "${api.openroute.url}")
+@FeignClient(name = "openRouteClient", url = "https://api.openrouteservice.org")
 public interface OpenRouteFeignClient {
     
     @GetMapping("/v2/directions/driving-car")
