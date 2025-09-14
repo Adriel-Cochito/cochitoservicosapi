@@ -24,9 +24,14 @@ public class DistanciaService {
 	}
 
 	public DistanciaQueryResult calcularDistancia(String cepOrigem, String cepDestino) {
+		
+		cepOrigem = cepOrigem.replaceAll("\\D", "");
+	    cepDestino = cepDestino.replaceAll("\\D", "");
+	    
 		// Consulta os CEPs para obter coordenadas
 		AwesomeCepResponse origemResponse = awesomeCepFeignClient.consultarCep(cepOrigem);
 		AwesomeCepResponse destinoResponse = awesomeCepFeignClient.consultarCep(cepDestino);
+		
 
 		// Prepara o resultado
 		DistanciaQueryResult resultado = new DistanciaQueryResult();
