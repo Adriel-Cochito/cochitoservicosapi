@@ -1,328 +1,462 @@
-# CochitoServicosAPI - Feature 1: Sistema de Notificações
+# Feature 02 - Cálculo de Distância entre CEPs
 
-## 🏢 Contexto do Projeto
+## 📋 Visão Geral
 
-O **CochitoServicosAPI** é uma aplicação Java Spring Boot desenvolvida para gerenciar serviços prestados por uma empresa de consultoria em TI. O sistema permite o controle completo de ordens de serviço, desde a criação até a execução, envolvendo funcionários especializados e clientes corporativos.
+A Feature 02 implementa um sistema completo de cálculo de distância entre CEPs utilizando integração com APIs externas. O projeto **cochitoServicoApi** expõe um endpoint REST que calcula a distância real entre dois CEPs, enquanto o projeto **cochitoApi** consome este serviço para enriquecer as ordens de serviço com informações de distância entre funcionário e cliente.
 
-### Arquitetura Base
-- **Backend**: Java 17 + Spring Boot 3.x + JPA/Hibernate
-- **Banco de Dados**: Configurável (H2 para dev, PostgreSQL para prod)
-- **Testes**: JUnit 5 + Mockito
-- **Metodologia**: Test-Driven Development (TDD)
+## 🏗️ Arquitetura Implementada
 
-### Domínio de Negócio
-A Cochito Serviços atua prestando consultoria especializada em:
-- Infraestrutura de TI
-- Desenvolvimento de software
-- Análise de sistemas
-- Consultoria em segurança digital
+### Projeto Principal: cochitoServicoApi
 
----
+#### 1. **Controller**: `ServicoController`
+- **Endpoint**: `GET /api/servicos/distancia`
+- **Parâmetros**: `cepOrigem` e `cepDestino`
+- **Retorno**: Objeto `DistanciaQueryResult` completo
 
-## 📊 Status do Projeto
+#### 2. **Service**: `DistanciaService`
+- Orquestra as chamadas às APIs externas
+- Implementa fallback com cálculo Haversine quando APIs falham
+- Processa e converte dados (metros → km, segundos → minutos)
 
-### Progresso TDD - Feature 1:
-- 🔴 **RED**: **100%** ✅
-- 🟢 **GREEN**: **100%** ✅  
-- 🟡 **REFACTOR**: **100%** ✅
+#### 3. **Feign Clients**
+- **AwesomeCepFeignClient**: Consulta coordenadas geográficas
+- **OpenRouteFeignClient**: Calcula distância real por rotas
 
-**Total de cenários implementados**: 15 testes (CT001 a CT015)
+#### 4. **Modelos de Dados**
+- **AwesomeCepResponse**: Mapeia resposta da API AwesomeAPI CEP
+- **OpenRouteResponse**: Mapeia resposta da API OpenRouteService
+- **DistanciaQueryResult**: Resultado consolidado para o cliente
 
----
+### Projeto Cliente: cochitoApi
 
-## 🏗️ Arquitetura do Sistema
+#### 1. **Controller**: `DistanciaController`
+- **Endpoint**: `GET /api/distancia/consulta/{cepOrigem}/{cepCliente}`
+- Abstrai a complexidade da consulta para outros sistemas
 
-### Sistema Existente (Base Consolidada)
-O CochitoServicosAPI já possuía a estrutura principal:
+#### 2. **Feign Client**: `DistanciaFeignClient`
+- Cliente para consumir o endpoint do cochitoServicoApi
+- Configurado via `application.properties`
 
-#### Classes Core:
-- **`Funcionario.java`** - Funcionários especializados (com controle ativo/inativo)
-- **`OrdemServico.java`** - Núcleo do sistema - Gerencia execução dos serviços
-- **`Servico.java`** - Catálogo de serviços oferecidos
-- **`Cliente.java`** - Clientes corporativos
+#### 3. **Integração com Ordem de Serviço**
+- **OrdemServicoService**: Enriquece automaticamente consultas de ordens
+- Campo `@Transient distancia` no modelo `OrdemServico`
 
-#### Fluxo Operacional:
-```
-Cliente solicita → OrdemServico criada → Funcionário atribuído → Serviços executados → Status atualizado
-```
+## 🔧 APIs Externas Utilizadas
 
-#### Arquitetura Atual do Projeto:
-```java
-// Estrutura expandida implementada
-Funcionario ← OrdemServico → ItemServico → Servico
-                  ↓              
-            Notificacao → TipoNotificacao
-```
+### 1. AwesomeAPI CEP
+- **URL**: `https://cep.awesomeapi.com.br/json/{cep}`
+- **Função**: Obter coordenadas (latitude/longitude) de CEPs
+- **Gratuita**: Sim
 
----
+### 2. OpenRouteService
+- **URL**: `https://api.openrouteservice.org/v2/directions/driving-car`
+- **Função**: Calcular distância real considerando rotas
+- **Autenticação**: API Key obrigatória
 
-## 🚀 Feature 1: Sistema de Notificações
+## 🚀 Endpoints Disponíveis
 
-### Objetivo
-Implementar um sistema completo de notificações para comunicar funcionários sobre mudanças de status em suas ordens de serviço, melhorando a comunicação interna e agilidade operacional.
+### **cochitoServicoApi - Endpoints Principais**
 
-### Classes Implementadas
-
-#### A. Estrutura de Dados:
-- **`ItemServico.java`** - ✅ **IMPLEMENTADA** - Item com quantidade e cálculos
-- **`Notificacao.java`** - ✅ **IMPLEMENTADA** - Entidade principal de notificação  
-- **`TipoNotificacao.java`** - ✅ **IMPLEMENTADA** - Enum para categorização
-
-#### B. Camada de Serviços:
-- **`NotificacaoService.java`** - ✅ **IMPLEMENTADA** - Lógica de negócio completa
-
-#### C. Cobertura de Testes:
-- **`ItemServicoTest.java`** - ✅ **5 cenários** - Testa cálculos e validações
-- **`NotificacaoTest.java`** - ✅ **3 cenários** - Testa entidade básica
-- **`NotificacaoServiceTest.java`** - ✅ **7 cenários** - Testa service completo
-
----
-
-## 📋 Requisitos Funcionais Implementados
-
-### RF001 - Gestão de Cálculos de ItemServico ✅
-Sistema responsável pelo cálculo de subtotais dos itens de serviço.
-
-#### Funcionalidades:
-- ✅ **RF001.1**: Cálculo de subtotal válido (`quantidade × preço`)
-- ✅ **RF001.2**: Tratamento de quantidade zero
-- ✅ **RF001.3**: Tratamento de quantidade negativa  
-- ✅ **RF001.4**: Tratamento de serviço nulo
-- ✅ **RF001.5**: Tratamento de preço nulo
-
-### RF002 - Gestão de Entidade Notificacao ✅
-Sistema responsável pelo comportamento básico da entidade Notificacao.
-
-#### Funcionalidades:
-- ✅ **RF002.1**: Inicialização com valores padrão (`lida = false`)
-- ✅ **RF002.2**: Getters/setters com integridade de dados
-- ✅ **RF002.3**: Controle de leitura com data automática
-
-### RF003 - Gestão de Serviços de Notificacao ✅
-Sistema responsável pela lógica de negócio das notificações.
-
-#### Funcionalidades:
-- ✅ **RF003.1**: Criação baseada em OrdemServico válida
-- ✅ **RF003.2**: Validação de funcionário ativo
-- ✅ **RF003.3**: Mensagens personalizadas contextuais
-- ✅ **RF003.4**: Marcação de leitura via service
-- ✅ **RF003.5**: Contagem de não lidas por funcionário
-- ✅ **RF003.6**: Validação de OrdemServico não nula
-- ✅ **RF003.7**: Validação de TipoNotificacao não nulo
-
----
-
-## 🔄 Cenários de Teste TDD (Metodologia Completa)
-
-### ItemServicoTest.java - RF001 (5 cenários)
-
-| Cenário | Descrição | Status TDD |
-|---------|-----------|------------|
-| **CT001** | Cálculo de subtotal válido | 🔴→🟢→🟡 ✅ |
-| **CT002** | Quantidade zero retorna zero | 🔴→🟢→🟡 ✅ |
-| **CT003** | Quantidade negativa retorna zero | 🔴→🟢→🟡 ✅ |
-| **CT004** | Serviço nulo retorna zero | 🔴→🟢→🟡 ✅ |
-| **CT005** | Preço nulo retorna zero | 🔴→🟢→🟡 ✅ |
-
-### NotificacaoTest.java - RF002 (3 cenários)
-
-| Cenário | Descrição | Status TDD |
-|---------|-----------|------------|
-| **CT006** | Inicialização com valores padrão | 🔴→🟢→🟡 ✅ |
-| **CT007** | Getters/setters funcionais | 🔴→🟢→🟡 ✅ |
-| **CT008** | Marcação como lida automática | 🔴→🟢→🟡 ✅ |
-
-### NotificacaoServiceTest.java - RF003 (7 cenários)
-
-| Cenário | Descrição | Status TDD |
-|---------|-----------|------------|
-| **CT009** | Criação para ordem válida | 🔴→🟢→🟡 ✅ |
-| **CT010** | Falha para funcionário inativo | 🔴→🟢→🟡 ✅ |
-| **CT011** | Mensagem personalizada com dados | 🔴→🟢→🟡 ✅ |
-| **CT012** | Marcação como lida via service | 🔴→🟢→🟡 ✅ |
-| **CT013** | Contagem de não lidas por funcionário | 🔴→🟢→🟡 ✅ |
-| **CT014** | Validação OrdemServico nula | 🔴→🟢→🟡 ✅ |
-| **CT015** | Validação TipoNotificacao nulo | 🔴→🟢→🟡 ✅ |
-
----
-
-## ⚡ Melhorias Implementadas no Refactor
-
-### 1. ItemServico.java - Validações Encapsuladas
-```java
-// ANTES (GREEN)
-if (quantidade == null || quantidade <= 0) return BigDecimal.ZERO;
-if(servico == null) return BigDecimal.ZERO;
-if(servico.getPreco() == null) return BigDecimal.ZERO;
-
-// DEPOIS (REFACTOR)
-private boolean isQuantidadeValida() { return quantidade != null && quantidade > 0; }
-private boolean isServicoValido() { return servico != null && servico.getPreco() != null; }
+#### 1. **Calcular Distância entre CEPs**
+```bash
+GET /api/servicos/distancia?cepOrigem={origem}&cepDestino={destino}
 ```
 
-### 2. NotificacaoService.java - Design Patterns Aplicados
+**Parâmetros:**
+- `cepOrigem` (String): CEP de origem (aceita formatação com pontos/hífens)
+- `cepDestino` (String): CEP de destino (aceita formatação com pontos/hífens)
 
-#### Builder Pattern para Mensagens:
-```java
-private static class NotificacaoMessageBuilder {
-    public String paraOrdemCriada() { /* contexto específico */ }
-    public String paraOrdemAtualizada() { /* contexto específico */ }
-    // ...
+**Exemplo de Chamada:**
+```bash
+curl -X GET "http://localhost:8081/api/servicos/distancia?cepOrigem=38067290&cepDestino=38065065"
+```
+
+**Resposta de Sucesso (200):**
+```json
+{
+    "cepOrigem": "38067290",
+    "cepDestino": "38065065",
+    "enderecoOrigem": "Rua República do Haiti",
+    "bairroOrigem": "Fabrício", 
+    "ufOrigem": "MG",
+    "enderecoDestino": "Rua Governador Valadares",
+    "bairroDestino": "Fabrício",
+    "ufDestino": "MG",
+    "distanciaKm": 3.22,
+    "tempoMinutos": 6.67
 }
 ```
 
-#### Template Method para Títulos:
-```java
-private String gerarTitulo(OrdemServico ordemServico, TipoNotificacao tipo) {
-    switch (tipo) {
-        case ORDEM_SERVICO_CRIADA: return "Nova Ordem de Serviço #" + idOrdem;
-        // ...
+**Casos de Teste do Endpoint Principal:**
+
+```bash
+# Teste 1: CEPs básicos
+curl -X GET "http://localhost:8081/api/servicos/distancia?cepOrigem=38067290&cepDestino=38065065"
+
+# Teste 2: CEPs com formatação (pontos e hífens)
+curl -X GET "http://localhost:8081/api/servicos/distancia?cepOrigem=38.067-290&cepDestino=38065-065"
+
+# Teste 3: CEPs de diferentes cidades
+curl -X GET "http://localhost:8081/api/servicos/distancia?cepOrigem=38065065&cepDestino=01310-100"
+
+# Teste 4: Verificar robustez com CEPs inválidos
+curl -X GET "http://localhost:8081/api/servicos/distancia?cepOrigem=00000000&cepDestino=11111111"
+```
+
+## 🧪 Validação e Testes
+
+### **Para Avaliadores: Como Validar a Implementação**
+
+#### 1. Testar Funcionalidade Principal (cochitoServicoApi)
+
+```bash
+# Teste básico - calcular distância entre CEPs de Uberaba
+curl -X GET "http://localhost:8081/api/servicos/distancia?cepOrigem=38067290&cepDestino=38065065"
+```
+
+#### 2. Testar Tratamento de Formatação
+
+```bash
+# CEPs com pontos e hífens (devem ser tratados automaticamente)
+curl -X GET "http://localhost:8081/api/servicos/distancia?cepOrigem=38.067-290&cepDestino=38065-065"
+```
+
+#### 3. Testar Diferentes Distâncias
+
+```bash
+# Teste com CEPs mais distantes
+curl -X GET "http://localhost:8081/api/servicos/distancia?cepOrigem=38065065&cepDestino=20040020"
+```
+
+**Resposta com Distância Incluída:**
+```json
+{
+    "id": 1,
+    "cliente": {
+        "id": 2,
+        "nome": "Maria Santos",
+        "endereco": {
+            "cep": "38020-433",
+            "logradouro": "Avenida Santa Beatriz da Silva",
+            "bairro": "São Benedito",
+            "localidade": "Uberaba",
+            "uf": "MG"
+        }
+    },
+    "funcionario": {
+        "id": 2,
+        "nome": "Mariana Lopes",
+        "endereco": {
+            "cep": "38065-065",
+            "logradouro": "Rua Governador Valadares",
+            "bairro": "Fabrício",
+            "localidade": "Uberaba",
+            "uf": "MG"
+        }
+    },
+    "servico": {
+        "id": 2,
+        "titulo": "Desenvolvimento de E-commerce",
+        "preco": 8500.0
+    },
+    "status": "EM_ANDAMENTO",
+    "distancia": {
+        "cepOrigem": "38065065",
+        "cepDestino": "38020433",
+        "enderecoOrigem": "Rua Governador Valadares",
+        "bairroOrigem": "Fabrício",
+        "ufOrigem": "MG",
+        "enderecoDestino": "Avenida Santa Beatriz da Silva",
+        "bairroDestino": "São Benedito",
+        "ufDestino": "MG",
+        "distanciaKm": 2.66,
+        "tempoMinutos": 3.39
     }
 }
 ```
 
-#### Validações Encapsuladas:
-```java
-private void validarParametrosEntrada(OrdemServico ordemServico, TipoNotificacao tipo)
-private void validarFuncionarioAtivo(Funcionario funcionario)  
-private Notificacao construirNotificacao(OrdemServico ordemServico, TipoNotificacao tipo, Funcionario funcionario)
+## ⚙️ Configuração
+
+### cochitoServicoApi (application.properties)
+```properties
+# OpenRouteService API Key
+api.openroute.apikey=eyJvcmciOiI1YjNjZTM1OTc4NTExMTAwMDFjZjYyNDgiLCJpZCI6ImYyYzNkMDY3YzI1ODQ0ODhhMDc3ZmNjNTI1NmY1N2Y1IiwiaCI6Im11cm11cjY0In0%3D
+
+# Server Configuration
+server.port=8081
 ```
 
-### 3. Notificacao.java - Robustez e Utilitários
+### cochitoApi (application.properties)
+```properties
+# URL do cochitoServicoApi
+cochitoservicoapi.url=http://localhost:8081
 
-#### Operação Idempotente:
+# Server Configuration  
+server.port=8080
+```
+
+## 🔍 Funcionalidades Implementadas
+
+### ✅ 1. Integração com APIs Externas
+
+Para documentação técnica detalhada das APIs utilizadas (AwesomeAPI CEP e OpenRouteService)
+
+Consulte: **[Readme-API-EXTERNA.md](./Readme-API-EXTERNA.md)**
+
+- [x] **AwesomeCepFeignClient**: Consulta coordenadas de CEPs
+- [x] **OpenRouteFeignClient**: Calcula rotas reais
+- [x] Tratamento de erros e fallback com Haversine
+
+
+### ✅ 2. Processamento de Dados
+- [x] Limpeza automática de CEPs (remove pontos/hífens)
+- [x] Conversão de unidades (metros → km, segundos → minutos)
+- [x] Arredondamento preciso para 2 casas decimais
+
+### ✅ 3. Endpoints Consumíveis
+- [x] **cochitoServicoApi**: `/api/servicos/distancia` (query params)
+- [x] **cochitoApi**: `/api/distancia/consulta/{origem}/{destino}` (path params)
+
+## 🔗 Consumo pelo Projeto da Disciplina Anterior (cochitoApi)
+
+### **Implementação do Cliente para Consumir cochitoServicoApi**
+
+#### 1. **DistanciaFeignClient** - Cliente Feign
 ```java
-public void marcarComoLida() {
-    if (!this.lida) {  // Só executa se necessário
-        this.lida = true;
-        this.dataLeitura = LocalDateTime.now();
+@FeignClient(name = "distanciaClient", url = "${cochitoservicoapi.url}")
+public interface DistanciaFeignClient {
+    
+    @GetMapping("/api/servicos/distancia")
+    DistanciaQueryResult calcularDistancia(
+        @RequestParam("cepOrigem") String cepOrigem,
+        @RequestParam("cepDestino") String cepDestino
+    );
+}
+```
+
+#### 2. **DistanciaController** - Endpoint Abstraído
+```bash
+GET /api/distancia/consulta/{cepOrigem}/{cepCliente}
+```
+
+**Exemplo de Uso:**
+```bash
+curl -X GET "http://localhost:8080/api/distancia/consulta/38067290/38065065"
+```
+
+#### 3. **Integração com OrdemServicoService**
+O serviço `OrdemServicoService` foi modificado para automaticamente consultar a distância ao buscar uma ordem de serviço:
+
+```java
+public OrdemServico buscarPorId(Integer id) {
+    OrdemServico ordemServico = ordemServicoRepository.findById(id).orElseThrow(...);
+    
+    // Consulta automática da distância entre funcionário e cliente
+    if (ordemServico.getFuncionario() != null && ordemServico.getCliente() != null) {
+        String cepFuncionario = ordemServico.getFuncionario().getEndereco().getCep();
+        String cepCliente = ordemServico.getCliente().getEndereco().getCep();
+        
+        DistanciaQueryResult distancia = distanciaService.consultarDistancia(cepFuncionario, cepCliente);
+        ordemServico.setDistancia(distancia);
+    }
+    
+    return ordemServico;
+}
+```
+
+#### 4. **Teste da Integração Completa**
+
+```bash
+# Buscar ordem de serviço que inclui distância automaticamente
+curl -X GET "http://localhost:8080/api/ordens-servico/1"
+```
+
+**Resposta Enriquecida com Distância:**
+```json
+{
+    "id": 1,
+    "cliente": {
+        "id": 2,
+        "nome": "Maria Santos",
+        "endereco": {
+            "cep": "38020-433",
+            "logradouro": "Avenida Santa Beatriz da Silva",
+            "bairro": "São Benedito",
+            "localidade": "Uberaba",
+            "uf": "MG"
+        }
+    },
+    "funcionario": {
+        "id": 2,
+        "nome": "Mariana Lopes",
+        "endereco": {
+            "cep": "38065-065",
+            "logradouro": "Rua Governador Valadares",
+            "bairro": "Fabrício",
+            "localidade": "Uberaba",
+            "uf": "MG"
+        }
+    },
+    "servico": {
+        "id": 2,
+        "titulo": "Desenvolvimento de E-commerce",
+        "preco": 8500.0
+    },
+    "status": "EM_ANDAMENTO",
+    "distancia": {
+        "cepOrigem": "38065065",
+        "cepDestino": "38020433",
+        "enderecoOrigem": "Rua Governador Valadares",
+        "bairroOrigem": "Fabrício",
+        "ufOrigem": "MG",
+        "enderecoDestino": "Avenida Santa Beatriz da Silva",
+        "bairroDestino": "São Benedito",
+        "ufDestino": "MG",
+        "distanciaKm": 2.66,
+        "tempoMinutos": 3.39
     }
 }
 ```
 
-#### Métodos Utilitários:
-```java
-public boolean foiLida() { return this.lida && this.dataLeitura != null; }
-public String resumo() { return String.format("Notificacao[tipo=%s, funcionario=%s, lida=%s]", ...); }
+### **Configuração Necessária no cochitoApi**
+
+**application.properties:**
+```properties
+# URL do cochitoServicoApi para comunicação entre projetos
+cochitoservicoapi.url=http://localhost:8081
+
+# Configuração do servidor
+server.port=8080
 ```
 
-#### Comparação Adequada:
-```java
-@Override
-public boolean equals(Object obj) { /* implementação robusta */ }
-@Override  
-public int hashCode() { return Objects.hash(titulo, tipoNotificacao, funcionario, dataCriacao); }
+### ✅ 4. Consumo entre Projetos
+- [x] **DistanciaFeignClient**: Cliente Feign no cochitoApi
+- [x] **OrdemServicoService**: Enriquecimento automático com distância
+- [x] Campo `@Transient` para não persistir no banco
+- [x] **DistanciaController**: Endpoint abstraído para facilitar uso
+- [x] **DistanciaService**: Serviço que encapsula chamada ao Feign Client
+
+### ✅ 5. Robustez e Tratamento de Erros
+- [x] Fallback para cálculo Haversine quando APIs falham
+- [x] Validação e sanitização de entrada de CEPs
+- [x] Tratamento de exceções de APIs externas
+
+## 🧪 Testes Implementados
+
+### Testes Unitários (cochitoServicoApi)
+- **DistanciaServiceTest**: Testa cenários de sucesso e fallback
+- **OpenRouteFeignClientTest**: Valida integração com API externa
+- **Cobertura**: Cenários normais, falhas de API e CEPs formatados
+
+### Validação Manual
+- Todos os endpoints foram testados com diferentes combinações de CEPs
+- Validação de respostas das APIs externas
+- Teste de integração completa entre os projetos
+
+## 📊 Fluxo de Execução Completo
+
+### **Cenário 1: Uso Direto do cochitoServicoApi**
+```
+1. Cliente → cochitoServicoApi:/api/servicos/distancia?cepOrigem=X&cepDestino=Y
+   ↓
+2. ServicoController → DistanciaService
+   ↓
+3. AwesomeCepFeignClient → https://cep.awesomeapi.com.br (CEP origem)
+   ↓
+4. AwesomeCepFeignClient → https://cep.awesomeapi.com.br (CEP destino)
+   ↓
+5. OpenRouteFeignClient → https://api.openrouteservice.org (coordenadas)
+   ↓
+6. Processamento e conversão → DistanciaQueryResult
+   ↓
+7. Resposta HTTP ← cochitoServicoApi
 ```
 
----
+### **Cenário 2: Consumo via cochitoApi (Projeto da Disciplina Anterior)**
+```
+1. Cliente → cochitoApi:/api/distancia/consulta/{origem}/{destino}
+   ↓
+2. DistanciaController → DistanciaService
+   ↓
+3. DistanciaFeignClient → cochitoServicoApi:/api/servicos/distancia
+   ↓
+4. [Fluxo do Cenário 1 no cochitoServicoApi]
+   ↓
+5. DistanciaQueryResult ← cochitoServicoApi
+   ↓
+6. Resposta final ← cochitoApi
+```
 
-## 🔗 Integração com Sistema Existente
+### **Cenário 3: Enriquecimento Automático de Ordem de Serviço**
+```
+1. Cliente → cochitoApi:/api/ordens-servico/{id}
+   ↓
+2. OrdemServicoController → OrdemServicoService.buscarPorId()
+   ↓
+3. Busca ordem no banco → OrdemServico (sem distância)
+   ↓
+4. Extrai CEPs do funcionário e cliente
+   ↓
+5. DistanciaService.consultarDistancia() → DistanciaFeignClient
+   ↓
+6. [Fluxo do Cenário 1 no cochitoServicoApi]
+   ↓
+7. DistanciaQueryResult ← cochitoServicoApi
+   ↓
+8. OrdemServico.setDistancia(resultado)
+   ↓
+9. Resposta com OrdemServico enriquecida ← cochitoApi
+```
 
-### Compatibilidade Total
-- ✅ **OrdemServico**: Uso do campo `itensServicos` já existente
-- ✅ **Funcionario**: Sem alterações - compatibilidade total
-- ✅ **Servico**: Sem alterações - compatibilidade total  
-- ✅ **Services Existentes**: Zero impacto nas funcionalidades atuais
+## 📈 Casos de Teste para Validação
 
-### Dados Acessados via Relacionamentos
-- **Funcionário**: `ordemServico.getFuncionario().getNome()`
-- **Status Funcionário**: `ordemServico.getFuncionario().isAtivo()`
-- **Serviços da Ordem**: `ordemServico.getItensServicos()`
-- **Valores**: `ItemServico.getQuantidade()` e `Servico.getPreco()`
-- **Status da Ordem**: `ordemServico.getStatus()`
+### **Testes do cochitoServicoApi (Projeto Principal)**
 
----
-
-## 🎯 Benefícios Entregues
-
-### Para o Negócio:
-- **Comunicação Ágil**: Funcionários notificados automaticamente
-- **Rastreabilidade**: Histórico completo de leitura das notificações
-- **Gestão Eficiente**: Contadores de notificações não lidas
-- **Escalabilidade**: Arquitetura preparada para novos tipos de notificação
-
-### Para Desenvolvimento:
-- **Cobertura de Testes**: 100% dos RFs testados
-- **Clean Code**: Refatoração seguindo melhores práticas
-- **Design Patterns**: Builder, Template Method aplicados
-- **Extensibilidade**: Fácil adição de novos tipos de notificação
-
-### Para Qualidade:
-- **TDD Rigoroso**: 15 cenários RED→GREEN→REFACTOR
-- **Validações Robustas**: Tratamento de todos os casos extremos  
-- **Código Defensivo**: Proteção contra NullPointer e dados inválidos
-- **Documentação**: JavaDoc completo para manutenibilidade
-
----
-
-## 🚀 Como Executar
-
-### Pré-requisitos
-- Java 17+
-- Maven 3.6+
-- IDE (IntelliJ IDEA, Eclipse, VS Code)
-
-### Comandos
+#### Teste 1: CEPs Básicos de Uberaba
 ```bash
-# Executar todos os testes
-mvn test
-
-# Executar apenas testes da Feature 1
-mvn test -Dtest="*ItemServicoTest,*NotificacaoTest,*NotificacaoServiceTest"
-
-# Executar aplicação
-mvn spring-boot:run
+curl "http://localhost:8081/api/servicos/distancia?cepOrigem=38067290&cepDestino=38065065"
+# Esperado: distanciaKm ≈ 3.22, tempoMinutos ≈ 6.67
 ```
 
-### Verificar Implementação
+#### Teste 2: CEPs com Formatação
 ```bash
-# Relatório de cobertura
-mvn jacoco:report
-
-# Verificar testes passando
-mvn clean test
+curl "http://localhost:8081/api/servicos/distancia?cepOrigem=38.067-290&cepDestino=38065-065"
+# Esperado: Mesmo resultado do Teste 1 (formatação é tratada automaticamente)
 ```
 
----
+#### Teste 3: CEPs de Diferentes Estados
+```bash
+curl "http://localhost:8081/api/servicos/distancia?cepOrigem=38065065&cepDestino=01310100"
+# Esperado: Distância maior entre Uberaba/MG e São Paulo/SP
+```
 
-## 📈 Roadmap e Próximos Passos
+### **Testes do cochitoApi (Consumo do Projeto Principal)**
 
-### Visão Geral do Projeto (4 Features Total)
-O CochitoServicosAPI está sendo desenvolvido em **4 features incrementais**, cada uma aplicando metodologia TDD rigorosa e expandindo as capacidades do sistema:
+#### Teste 4: Consumo Direto via Cliente
+```bash
+curl "http://localhost:8080/api/distancia/consulta/38067290/38065065"
+# Esperado: Mesmo resultado através do cliente Feign
+```
 
-- ✅ **Feature 1**: Sistema de Notificações *(COMPLETA)*
-- 🔄 **Feature 2**: Módulo com API *(EM PLANEJAMENTO)*  
-- 📋 **Feature 3**: *(A SER DEFINIDA)*
-- 📋 **Feature 4**: *(A SER DEFINIDA)*
+#### Teste 5: Ordem de Serviço com Distância Automática
+```bash
+curl "http://localhost:8080/api/ordens-servico/1"
+# Esperado: Objeto completo com campo "distancia" preenchido automaticamente
+```
 
-### Feature 2 - Sistema com API Externa (Próxima)
-Integração de uma API externa ao projeto usando metodologia TDD. Detalhes técnicos e classes a serem definidos.
+## 🎯 Pontos de Avaliação
 
-### Features 3 e 4 - Roadmap Estratégico
-*(A serem definidas conforme evolução do projeto)*
+**Para o Avaliador - Itens Implementados:**
 
-### Melhorias Contínuas (Todas as Features):
-- **Performance**: Otimizações baseadas em métricas reais
-- **Documentação**: JavaDoc e README sempre atualizados
-- **Cobertura de Testes**: Meta de 100% para código crítico
-- **Clean Architecture**: Refatoração constante seguindo SOLID
+1. **✅ Integração com APIs Externas**: Duas APIs distintas (AwesomeAPI + OpenRoute)
+2. **✅ Classes de Mapeamento**: AwesomeCepResponse, OpenRouteResponse, DistanciaQueryResult
+3. **✅ Feign Clients**: Dois clients funcionais com configuração adequada
+4. **✅ Service com Lógica**: Processamento, conversão e fallback implementados
+5. **✅ Endpoints REST**: Dois endpoints em projetos diferentes
+6. **✅ Consumo entre Projetos**: DistanciaFeignClient funcional
+7. **✅ Enriquecimento de Dados**: OrdemServico com informação de distância
+8. **✅ Tratamento de Erros**: Fallback e validação robustos
+9. **✅ Testes**: Unitários e de integração implementados
+10. **✅ Documentação**: README completo com exemplos práticos
 
----
-
-## 👥 Equipe
-
-**Desenvolvido com metodologia TDD por:**
-- Professor Elberth (Orientação técnica)
-- Adriel Cochito (Desenvolvimento principal)
-
----
-
-## 📄 Licença
-
-Este projeto é desenvolvido para fins acadêmicos como parte do curso de Engenharia de Software com foco em metodologias ágeis e boas práticas de desenvolvimento.
-
----
-
-**🏆 Feature 1 - Sistema de Notificações: COMPLETA ✅**
-
-*Implementado seguindo rigorosamente TDD (Test-Driven Development) com 15 cenários de teste e refatoração aplicando Design Patterns para código enterprise de alta qualidade.*
+A Feature 02 está **100% funcional** e atende todos os requisitos especificados, fornecendo uma base sólida para calcular distâncias entre CEPs com integração robusta entre microserviços.
